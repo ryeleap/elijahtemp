@@ -40,9 +40,9 @@ Character Classes:
 [^abc]      : anything except a, b, or c
 
 """
-# current user name (not implemented)
-user_name = None
-
+# current user name (memory, not implemented)
+userName = None
+nameActive = 'True'
 
 # map from adjectives to nouns for elijah use
 adjective_to_noun = {
@@ -79,8 +79,7 @@ adjective_to_noun = {
     "goated": "goatedness"
 }
 
-
-patterns = [
+namePatterns = [
     # sentence name response
     (r"(?:my )?(?:name(?: is|'s)|name) (\w+)\W*$",
      ["Hi {0}, just kidding... I don't really care. What do you want?"]),
@@ -88,7 +87,9 @@ patterns = [
     # single word name response
     (r"^(\w+)\W*$",
      ["Hi {0}, just kidding... I don't really care. What do you want?"]),
-    
+]
+
+regPatterns = [
     # want to sentence response
     (r"(?:i )?want (.*)\W*$",
      ["Why do you want {0}?"]),
@@ -98,17 +99,34 @@ patterns = [
      ["Why do you want me to {0}?"]),
     
     # want to reasoning sentence response (with self adjective)
-    (r"^(?:because(?: i am| i'm) )(\w+)\W*$",
+    (r"^(?:because(?: i am| i'm| im) )(\w+)\W*$",
      ["... Really? That's your reason? Oh well, can you tell me more about your {0}"]),
-
 ]
 
-def elijah_response(user_input):
+def elijah_name_response(user_input):
     # standardize in lowercase
     user_input = user_input.lower()
 
     # check each pattern in order of priority for matches
-    for pattern, responses in patterns:
+    for pattern, responses in namePatterns:
+        match = re.match(pattern, user_input)
+        if match:
+            captured = match.group(1).lower()
+            noun = adjective_to_noun.get(captured, captured)
+            # respond if match
+            response = responses[0].format(noun)
+            # replaces refs with actual values ({0} -> riley, in "What is your name?")
+            
+            nameDone = 'True'
+            userName = captured
+            return response
+        
+def elijah_reg_response(user_input):
+    # standardize in lowercase
+    user_input = user_input.lower()
+
+    # check each pattern in order of priority for matches
+    for pattern, responses in regPatterns:
         match = re.match(pattern, user_input)
         if match:
             captured = match.group(1).lower()
@@ -127,9 +145,18 @@ while True:
     if user_input.lower() in ("bye"):
         print("ELIJAH: Goodbye.")
         break
-
-    if(elijah_response(user_input)):
-        print("ELIJAH:", elijah_response(user_input))
+    
+    # i don't wanna talk about these debug logs LOL
+    # print("elijah name response val is "+ str(elijah_name_response(user_input)))
+    # print("elijah reg response val is "+ str(elijah_reg_response(user_input)))
+    
+    print(nameActive)
+    if(elijah_name_response(user_input) and nameActive == 'True'):
+        print("ELIJAH:", elijah_name_response(user_input))
+        nameActive = 'false'
+        # print(nameActive)
+    elif(elijah_reg_response(user_input)):
+        print("ELIJAH:", elijah_reg_response(user_input))
     else:
         print("What the hell are you talking about.")
 
