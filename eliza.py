@@ -41,8 +41,8 @@ Character Classes:
 
 """
 # current user name (memory, not implemented)
-userName = None
-nameActive = 'True'
+global userName, nameActive
+nameActive = True
 
 # map from adjectives to nouns for elijah use
 adjective_to_noun = {
@@ -124,8 +124,7 @@ regPatterns = [
 ]
 
 def elijah_name_response(user_input):
-    # standardize in lowercase
-    user_input = user_input.lower()
+    user_input
 
     # check each pattern in order of priority for matches
     for pattern, responses in namePatterns:
@@ -142,9 +141,6 @@ def elijah_name_response(user_input):
             return response
         
 def elijah_reg_response(user_input):
-    # standardize in lowercase
-    user_input = user_input.lower()
-
     # check each pattern in order of priority for matches
     for pattern, responses in regPatterns:
         match = re.match(pattern, user_input)
@@ -172,22 +168,25 @@ print("ELIJAH: Hi, I'm (allegedly) a psychotherapist. What is your name?")
 
 while True:
     user_input = input("> ")
-
-    if user_input.lower() in ("bye"):
+    user_input = user_input.lower()
+    if user_input in ("bye"):
         print("ELIJAH: Goodbye.")
         break
     
     # i don't wanna talk about these debug logs LOL
-    # print("elijah name response val is "+ str(elijah_name_response(user_input)))
-    # print("elijah reg response val is "+ str(elijah_reg_response(user_input)))
+
+    
+    nameResponse = elijah_name_response(user_input)
+    regResponse = elijah_reg_response(user_input)
     
     # print(nameActive)
-    if(elijah_name_response(user_input) and nameActive == 'True'):
-        print("ELIJAH:", elijah_name_response(user_input))
+
+    if(nameResponse and nameActive):
+        print("ELIJAH:", nameResponse)
         nameActive = 'false'
         # print(nameActive)
-    elif(elijah_reg_response(user_input)):
-        print("ELIJAH:", elijah_reg_response(user_input))
+    elif(regResponse):
+        print("ELIJAH:", regResponse)
     else:
         print("What the hell are you talking about.")
 
