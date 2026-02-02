@@ -9,20 +9,21 @@ Usage: Run the program. The chatbot will prompt for your name and then
 respond to your statements. Type 'bye' to exit.
 
 Examples:
-> Hi, I'm Riley
+
+ELIJAH: Hi, I'm (allegedly) a psychotherapist. What is your name?
+> Riley / My name is Riley
+
 ELIJAH: Hi riley, just kidding... I don't really care. What do you want?
+> I want you to become awesome
+ELIJAH: Why do you want me to become awesome?
 
-> I want ice cream
-ELIJAH: Why do you want ice cream?
+> Because I said so
+ELIJAH: ... Really? That's your reason? Oh well, riley, can you tell me more about you feel liking it
 
-Algorithm:
-1) Greet the user and ask for their name.
-2) Check if user input matches any name-related regex patterns.
-3) If matched, respond accordingly and store the user's name.
-4) Check if user input matches other regular expression patterns (e.g., 'I want ...', 'because ...').
-5) Transform pronouns and adjectives in the user's input to generate responses.
-6) If no patterns match, provide a default message.
-7) Repeat until user types 'bye'.
+> yes
+ELIJAH: Why do you think you thought about that?
+
+
 """
 # current user name (for memory purposes)
 global userName, namePatternActive
@@ -75,7 +76,9 @@ verb_to_ing = {
     "play": "playing",
     "study": "studying",
     "cry": "crying",
-    "try": "trying"
+    "try": "trying",
+    "said": "saying",
+    "loving": "money"
 }
 
 # transformations elijah uses for responses
@@ -114,7 +117,7 @@ regPatterns = [
     
     # want to reasoning sentence response (with verb)
     (r"^(?:because(?: i )(.+))$",
-     ["... Really? That's your reason? Oh well, {userName}, can you tell me more about you {0}"]),
+     ["... Really? That's your reason? Oh well, {userName}, can you tell me more about how you {0}"]),
 
     # want to reasoning sentence response (non-self subject)
     (r"^because (he|she|they|we) (.+)$",
@@ -124,15 +127,17 @@ regPatterns = [
     (r"(?:i )?want you to (.*)\W*$",
      ["Why do you want me to {0}?"]),
 
-    (r"(yes)(?:.+)\W*$",
-     ["How does that make you feel?"]),
-    
-    (r"(no)(?:.+)\W*$",
-     ["Man fuck you"]),
-     
     # want to sentence response
     (r"(?:i )?want (.*)\W*$",
      ["Why do you want {0}?"]),
+    
+    # tell me more response
+    (r"(yes)(?:.*)\W*$",
+     ["Why do you think it is that way?"]),
+    
+    # tell me more response (2)
+    (r"(no)(?:.*)\W*$",
+     ["Man fuck you"]),
        
     # want to sentence response (single word)
     (r"^(\w+)\W*$",
