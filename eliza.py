@@ -124,8 +124,7 @@ regPatterns = [
 ]
 
 def elijah_name_response(user_input):
-    user_input
-
+    global userName, nameActive
     # check each pattern in order of priority for matches
     for pattern, responses in namePatterns:
         match = re.match(pattern, user_input)
@@ -136,11 +135,12 @@ def elijah_name_response(user_input):
             response = responses[0].format(noun)
             # replaces refs with actual values ({0} -> riley, in "What is your name?")
             
-            nameDone = 'True'
+            nameActive = 'True'
             userName = captured
             return response
         
 def elijah_reg_response(user_input):
+    global userName, nameActive
     # check each pattern in order of priority for matches
     for pattern, responses in regPatterns:
         match = re.match(pattern, user_input)
@@ -167,25 +167,19 @@ def elijah_reg_response(user_input):
 print("ELIJAH: Hi, I'm (allegedly) a psychotherapist. What is your name?")
 
 while True:
-    user_input = input("> ")
-    user_input = user_input.lower()
+    user_input = input("> ").lower()
     if user_input in ("bye"):
         print("ELIJAH: Goodbye.")
         break
     
-    # i don't wanna talk about these debug logs LOL
-
-    
     nameResponse = elijah_name_response(user_input)
     regResponse = elijah_reg_response(user_input)
     
-    # print(nameActive)
-
-    if(nameResponse and nameActive):
+    if nameResponse and nameActive:
         print("ELIJAH:", nameResponse)
         nameActive = 'false'
         # print(nameActive)
-    elif(regResponse):
+    elif regResponse:
         print("ELIJAH:", regResponse)
     else:
         print("What the hell are you talking about.")
