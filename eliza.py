@@ -46,37 +46,49 @@ nameActive = 'True'
 
 # map from adjectives to nouns for elijah use
 adjective_to_noun = {
-    "greedy": "greed",
-    "hungry": "hunger",
-    "needy": "need",
-    "sad": "sadness",
-    "angry": "anger",
-    "happy": "happiness",
-    "anxious": "anxiety",
-    "lonely": "loneliness",
-    "jealous": "jealousy",
-    "tired": "fatigue",
-    "scared": "fear",
-    "afraid": "fear",
-    "confused": "confusion",
-    "excited": "excitement",
-    "bored": "boredom",
-    "frustrated": "frustration",
-    "disappointed": "disappointment",
-    "proud": "pride",
-    "ashamed": "shame",
-    "embarrassed": "embarrassment",
-    "grateful": "gratitude",
-    "hopeful": "hope",
-    "curious": "curiosity",
-    "lonely": "loneliness",
-    "angry": "anger",
-    "jealous": "jealousy",
-    "guilty": "guilt",
-    "relaxed": "relaxation",
-    "stressed": "stress",
-    "worried": "worry",
-    "goated": "goatedness"
+    # "greedy": "greed",
+    # "hungry": "hunger",
+    # "needy": "need",
+    # "sad": "sadness",
+    # "angry": "anger",
+    # "happy": "happiness",
+    # "anxious": "anxiety",
+    # "lonely": "loneliness",
+    # "jealous": "jealousy",
+    # "tired": "fatigue",
+    # "scared": "fear",
+    # "afraid": "fear",
+    # "confused": "confusion",
+    # "excited": "excitement",
+    # "bored": "boredom",
+    # "frustrated": "frustration",
+    # "disappointed": "disappointment",
+    # "proud": "pride",
+    # "ashamed": "shame",
+    # "embarrassed": "embarrassment",
+    # "grateful": "gratitude",
+    # "hopeful": "hope",
+    # "curious": "curiosity",
+    # "lonely": "loneliness",
+    # "angry": "anger",
+    # "jealous": "jealousy",
+    # "guilty": "guilt",
+    # "relaxed": "relaxation",
+    # "stressed": "stress",
+    # "worried": "worry",
+    # "goated": "goatedness"
+}
+
+pronoun_to_pronoun = {
+    "i": "you",
+    "me": "you",
+    "my": "your",
+    "mine": "yours",
+    "myself": "yourself",
+    "you": "me",
+    "your": "my",
+    "yours": "mine",
+    "yourself": "myself"
 }
 
 namePatterns = [
@@ -99,8 +111,16 @@ regPatterns = [
      ["Why do you want me to {0}?"]),
     
     # want to reasoning sentence response (with self adjective)
-    (r"^(?:because(?: i am| i'm| im) )(\w+)\W*$",
-     ["... Really? That's your reason? Oh well, can you tell me more about your {0}"]),
+    (r"^(?:because(?: i am| i'm| im) )(.+)\W*$",
+     ["... Really? That's your reason? Oh well, can you tell me more about how you're {0}"]),
+    
+    # want to reasoning sentence response (with verb)
+    (r"^(?:because(?: i )(.+))$",
+     ["... Really? That's your reason? Oh well, can you tell me more about how you {0}"]),
+
+    
+    # I'm x because y 
+    # How do you feel about y?
 ]
 
 def elijah_name_response(user_input):
@@ -130,9 +150,20 @@ def elijah_reg_response(user_input):
         match = re.match(pattern, user_input)
         if match:
             captured = match.group(1).lower()
-            noun = adjective_to_noun.get(captured, captured)
+            
+            words = captured.lower().split()
+            
+            converted_words = [
+                pronoun_to_pronoun.get(adjective_to_noun.get(word, word), word)
+                for word in words
+            ]
+
+            # for word in converted_words:
+                # print(word)
+            noun_phrase = " ".join(converted_words)
+
             # respond if match
-            response = responses[0].format(noun)
+            response = responses[0].format(noun_phrase)
             # replaces refs with actual values ({0} -> riley, in "What is your name?")
             return response
 
@@ -150,7 +181,7 @@ while True:
     # print("elijah name response val is "+ str(elijah_name_response(user_input)))
     # print("elijah reg response val is "+ str(elijah_reg_response(user_input)))
     
-    print(nameActive)
+    # print(nameActive)
     if(elijah_name_response(user_input) and nameActive == 'True'):
         print("ELIJAH:", elijah_name_response(user_input))
         nameActive = 'false'
