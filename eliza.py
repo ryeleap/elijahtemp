@@ -2,7 +2,7 @@ import re
 
 """
 Assignment: ELIZA (Elijah)"
-Author: Riley Pruitt
+Author: Riley
 Date: 2026-01-30
 
 Usage: Run the program. The chatbot will prompt for your name and then
